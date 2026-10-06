@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { 
   ShoppingOutlined, 
   EyeOutlined, 
   StarFilled, 
   ArrowRightOutlined 
 } from '@ant-design/icons';
+import { Cartcontext } from '../Features/Cart/Cartcontext';
 
 const data = [
   {
@@ -218,6 +219,8 @@ const data = [
 ];
 
 export default function FeaturedProducts() {
+    const { dispatch } = useContext(Cartcontext);
+
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   const categories = ["All", ...Array.from(new Set(data.map((item) => item.category)))];
@@ -311,6 +314,7 @@ export default function FeaturedProducts() {
                   <div className="absolute inset-x-3 bottom-3 z-10 flex gap-2 translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out">
                     <button
                       disabled={!ele.inStock}
+                      onClick={()=>{dispatch({type:"ADD_TO_CART",payload:ele})}}
                       className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold tracking-wide uppercase transition-colors shadow-lg ${
                         ele.inStock
                           ? "bg-neutral-950 text-white hover:bg-neutral-800 active:scale-98"

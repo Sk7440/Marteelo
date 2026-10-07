@@ -1,13 +1,13 @@
 import React, { useContext, useState } from 'react';
-import { 
-  ShoppingOutlined, 
-  EyeOutlined, 
-  StarFilled, 
-  ArrowRightOutlined 
+import {
+  ShoppingOutlined,
+  EyeOutlined,
+  StarFilled,
+  ArrowRightOutlined
 } from '@ant-design/icons';
-import { Cartcontext } from '../Features/Cart/Cartcontext';
+import { cartContext } from '../Features/Cart/Cartcontext';
 
-const data = [
+export const data = [
   {
     id: 1,
     sku: "TECH-AUD-001",
@@ -219,20 +219,22 @@ const data = [
 ];
 
 export default function FeaturedProducts() {
-    const { dispatch } = useContext(Cartcontext);
+  const { openBar } = useContext(cartContext)
 
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   const categories = ["All", ...Array.from(new Set(data.map((item) => item.category)))];
 
-  const filteredData = selectedCategory === "All" 
-    ? data 
+  const filteredData = selectedCategory === "All"
+    ? data
     : data.filter((item) => item.category === selectedCategory);
-
+  function handleAddtocart(ele) {
+    openBar(ele.id)
+  }
   return (
     <section className="w-full bg-[#fbfbfd] text-neutral-900 py-16 sm:py-24 px-4 sm:px-8 lg:px-12 antialiased">
       <div className="max-w-7xl mx-auto">
-        
+
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 pb-6 border-b border-neutral-200/80 gap-6">
           <div>
@@ -253,11 +255,10 @@ export default function FeaturedProducts() {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-1.5 rounded-full text-xs font-medium tracking-tight whitespace-nowrap transition-all duration-200 ${
-                  selectedCategory === cat
-                    ? "bg-neutral-950 text-white shadow-sm"
-                    : "bg-white text-neutral-600 border border-neutral-200 hover:border-neutral-400"
-                }`}
+                className={`px-4 py-1.5 rounded-full text-xs font-medium tracking-tight whitespace-nowrap transition-all duration-200 ${selectedCategory === cat
+                  ? "bg-neutral-950 text-white shadow-sm"
+                  : "bg-white text-neutral-600 border border-neutral-200 hover:border-neutral-400"
+                  }`}
               >
                 {cat}
               </button>
@@ -273,23 +274,20 @@ export default function FeaturedProducts() {
               : 0;
 
             return (
-              <div 
-                key={ele.id} 
+              <div
+                key={ele.id}
                 className="group relative flex flex-col bg-white rounded-2xl border border-neutral-200/80 overflow-hidden hover:border-neutral-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all duration-300"
               >
-                {/* Image Canvas Container */}
                 <div className="relative aspect-square w-full bg-[#f4f4f6] overflow-hidden">
-                  
-                  {/* Badge */}
+
                   {ele.badge && (
                     <div className="absolute top-3.5 left-3.5 z-10">
-                      <span className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-medium tracking-wider uppercase backdrop-blur-md ${
-                        ele.badge === "Out of Stock"
-                          ? "bg-neutral-900/80 text-neutral-300"
-                          : ele.badge === "Sale"
+                      <span className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-medium tracking-wider uppercase backdrop-blur-md ${ele.badge === "Out of Stock"
+                        ? "bg-neutral-900/80 text-neutral-300"
+                        : ele.badge === "Sale"
                           ? "bg-rose-600 text-white"
                           : "bg-neutral-950/80 text-white"
-                      }`}>
+                        }`}>
                         {ele.badge}
                       </span>
                     </div>
@@ -314,17 +312,16 @@ export default function FeaturedProducts() {
                   <div className="absolute inset-x-3 bottom-3 z-10 flex gap-2 translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out">
                     <button
                       disabled={!ele.inStock}
-                      onClick={()=>{dispatch({type:"ADD_TO_CART",payload:ele})}}
-                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold tracking-wide uppercase transition-colors shadow-lg ${
-                        ele.inStock
-                          ? "bg-neutral-950 text-white hover:bg-neutral-800 active:scale-98"
-                          : "bg-neutral-300 text-neutral-500 cursor-not-allowed shadow-none"
-                      }`}
+                      onClick={() => { handleAddtocart(ele) }}
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold tracking-wide uppercase transition-colors shadow-lg ${ele.inStock
+                        ? "bg-neutral-950 text-white hover:bg-neutral-800 active:scale-98"
+                        : "bg-neutral-300 text-neutral-500 cursor-not-allowed shadow-none"
+                        }`}
                     >
                       <ShoppingOutlined className="text-sm" />
                       {ele.inStock ? "Add to Cart" : "Sold Out"}
                     </button>
-                    <button 
+                    <button
                       aria-label="Quick View"
                       className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/95 text-neutral-700 hover:text-black hover:bg-white border border-neutral-200 shadow-lg active:scale-98 transition-colors"
                     >
@@ -335,7 +332,7 @@ export default function FeaturedProducts() {
 
                 {/* Details Section */}
                 <div className="p-4 sm:p-5 flex flex-col flex-1">
-                  
+
                   {/* Category & Brand + Rating */}
                   <div className="flex items-center justify-between text-xs text-neutral-500 mb-1.5 font-mono">
                     <span className="uppercase tracking-wider text-[11px] truncate max-w-[65%]">

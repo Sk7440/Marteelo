@@ -4,12 +4,14 @@ import Herosection from '../components/layouts/Herosection'
 import Footer from '../components/layouts/Footer'
 import ProductHeroCarousel from '../data/Products'
 import Testimonials from '../data/Reviews'
+import Sidebar from '../components/layouts/Sidebar'
 
 function Home() {
   return (
     <>
     <Navbar/>
     <Herosection/>
+    <Sidebar/>
     <ProductHeroCarousel/>
     <Testimonials/>
     <Footer/>

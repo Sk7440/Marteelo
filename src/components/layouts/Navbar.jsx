@@ -3,9 +3,11 @@ import { useContext } from "react";
 import { toast } from "react-toastify";
 import { mainContext } from "../../Features/Auth/Context";
 import { Link } from "react-router-dom";
+import { cartContext } from "../../Features/Cart/Cartcontext";
 
 function Navbar() {
     const { login } = useContext(mainContext);
+    const { openBar } = useContext(cartContext);
 
     return (
         <nav className="flex items-center justify-between px-6 lg:px-12 py-3.5 bg-white/80 backdrop-blur-xl border-b border-neutral-200/80 sticky top-0 z-50 transition-all">
@@ -29,6 +31,7 @@ function Navbar() {
 
             <div className="flex items-center gap-2.5 sm:gap-3">
                 <button
+                onClick={()=>{openBar()}}
                     aria-label="Cart"
                     className="relative p-2 text-neutral-700 hover:text-neutral-950 hover:bg-neutral-100 rounded-full transition-colors cursor-pointer"
                 >

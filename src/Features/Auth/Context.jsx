@@ -1,14 +1,16 @@
-import React, { useState } from 'react'
-import { createContext } from 'react'
+import React, { createContext, useReducer } from 'react'
+import authReducer, { loginState } from './loginReducer'
+
 export const mainContext = createContext()
+
 function Context({ children }) {
-    const [login, setLogin] = useState(false)
-  
-    return (
-        <mainContext.Provider value={{ login, setLogin}}>
-            {children}
-        </mainContext.Provider>
-    )
+  const [state, dispatch] = useReducer(authReducer, loginState)
+
+  return (
+    <mainContext.Provider value={{ state, dispatch }}>
+      {children}
+    </mainContext.Provider>
+  )
 }
 
 export default Context

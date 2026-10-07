@@ -1,4 +1,4 @@
-import React, { useContext, useReducer, useState } from 'react'
+import React, { useReducer, useState } from 'react'
 import { createContext } from 'react'
 import Reducerfn from './Reducerfn'
 import { data } from '../../data/Products'

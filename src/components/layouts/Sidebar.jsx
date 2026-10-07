@@ -6,15 +6,16 @@ import { cartContext } from '../../Features/Cart/Cartcontext';
 function Sidebar() {
     const { sideBar, setSidebar } = useContext(cartContext)
     const { state } = useContext(cartContext)
+    const { dispatch } = useContext(cartContext)
     console.log(state);
-    
+
     let position;
-        if (!sideBar) {
-            position = "-right-120"
-        }
-        else {
-            position = "right-0"
-        }
+    if (!sideBar) {
+        position = "-right-120"
+    }
+    else {
+        position = "right-0"
+    }
     function back() {
         setSidebar(false)
 
@@ -55,7 +56,9 @@ function Sidebar() {
                                     </p>
 
                                     <div className="inline-flex items-center gap-2 mt-3 rounded-lg border border-neutral-800 bg-neutral-900/80 px-2 py-1">
-                                        <button className="h-5 w-5 flex items-center justify-center rounded text-neutral-400 hover:text-white hover:bg-neutral-800 transition active:scale-90 text-sm font-bold">
+                                        <button 
+                                        onClick={() => dispatch({ type: "INCREASE QTY", payload: ele.id })}
+                                        className="h-5 w-5 flex items-center justify-center rounded text-neutral-400 hover:text-white hover:bg-neutral-800 transition active:scale-90 text-sm font-bold">
                                             +
                                         </button>
 
@@ -63,7 +66,9 @@ function Sidebar() {
                                             {ele.qty}
                                         </p>
 
-                                        <button className="h-5 w-5 flex items-center justify-center rounded text-neutral-400 hover:text-white hover:bg-neutral-800 transition active:scale-90 text-sm font-bold">
+                                        <button
+                                        onClick={() => dispatch({ type: "DECREASE QTY", payload: ele.id })}
+                                         className="h-5 w-5 flex items-center justify-center rounded text-neutral-400 hover:text-white hover:bg-neutral-800 transition active:scale-90 text-sm font-bold">
                                             -
                                         </button>
                                     </div>
@@ -76,6 +81,7 @@ function Sidebar() {
                                     </span>
                                 </div>
                                 <button
+                                    onClick={() => dispatch({ type: "REMOVE FROM CART", payload: ele.id })}
                                     className="h-9 w-9 inline-flex items-center justify-center rounded-lg border border-neutral-800 bg-neutral-900 text-neutral-400 hover:text-red-600 hover:border-neutral-700 transition active:scale-95 mb-6"
                                 >
                                     <ImCross className="text-lg" />

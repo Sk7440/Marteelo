@@ -1,14 +1,13 @@
 import { CiShoppingCart } from "react-icons/ci";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import { mainContext } from "../../Features/Auth/Context";
 import { Link } from "react-router-dom";
 import { cartContext } from "../../Features/Cart/Cartcontext";
 
 function Navbar() {
-    const { login } = useContext(mainContext);
     const { openBar } = useContext(cartContext);
-
+   
     return (
         <nav className="flex items-center justify-between px-6 lg:px-12 py-3.5 bg-white/80 backdrop-blur-xl border-b border-neutral-200/80 sticky top-0 z-50 transition-all">
 
@@ -47,7 +46,8 @@ function Navbar() {
                     </button>
                 </Link>
                 <Link to="/signup">
-                    <button className="px-4 py-1.5 text-xs font-medium cursor-pointer text-white bg-neutral-950 rounded-full hover:bg-neutral-800 active:scale-95 transition-all shadow-sm">
+                    <button
+                    className="px-4 py-1.5 text-xs font-medium cursor-pointer text-white bg-neutral-950 rounded-full hover:bg-neutral-800 active:scale-95 transition-all shadow-sm">
                         Sign Up
                     </button>
                 </Link>

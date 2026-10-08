@@ -56,9 +56,9 @@ function Sidebar() {
                                     </p>
 
                                     <div className="inline-flex items-center gap-2 mt-3 rounded-lg border border-neutral-800 bg-neutral-900/80 px-2 py-1">
-                                        <button 
-                                        onClick={() => dispatch({ type: "INCREASE QTY", payload: ele.id })}
-                                        className="h-5 w-5 flex items-center justify-center rounded text-neutral-400 hover:text-white hover:bg-neutral-800 transition active:scale-90 text-sm font-bold">
+                                        <button
+                                            onClick={() => dispatch({ type: "INCREASE QTY", payload: ele.id })}
+                                            className="h-5 w-5 flex items-center justify-center rounded text-neutral-400 hover:text-white hover:bg-neutral-800 transition active:scale-90 text-sm font-bold">
                                             +
                                         </button>
 
@@ -67,8 +67,8 @@ function Sidebar() {
                                         </p>
 
                                         <button
-                                        onClick={() => dispatch({ type: "DECREASE QTY", payload: ele.id })}
-                                         className="h-5 w-5 flex items-center justify-center rounded text-neutral-400 hover:text-white hover:bg-neutral-800 transition active:scale-90 text-sm font-bold">
+                                            onClick={() => dispatch({ type: "DECREASE QTY", payload: ele.id })}
+                                            className="h-5 w-5 flex items-center justify-center rounded text-neutral-400 hover:text-white hover:bg-neutral-800 transition active:scale-90 text-sm font-bold">
                                             -
                                         </button>
                                     </div>

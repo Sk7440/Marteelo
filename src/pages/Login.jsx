@@ -1,69 +1,100 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { mainContext } from '../Features/Auth/Context';
+import { toast } from 'react-toastify';
 
 function Login() {
+    const { authDispatch, authState } = useContext(mainContext);
 
     const navigate = useNavigate()
 
+    const [signinData, setSigninData] = useState({
+        email: "",
+        password: "",
+    });
+    function handlingSignin(e) {
+        setSigninData({
+            ...signinData,
+            [e.target.name]: e.target.value,
+        });
+    }
+    function handleSignin(e) {
+        e.preventDefault();
+        authDispatch({ type: "LOGIN", payload: signinData })
+
+
+
+    }
+    useEffect(() => {
+        if (authState.currentUser !== null) {
+
+            toast.success("Login Successful")
+            navigate('/')
+        }
+
+    }, [authState])
+
 
     return (
-        <div class="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12">
-            <div class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 p-8 sm:p-10 transition-all">
-                <div class="text-center mb-8">
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12">
+            <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 p-8 sm:p-10 transition-all">
+                <div className="text-center mb-8">
 
-                    <h1 class="text-2xl font-bold tracking-tight text-slate-900">Welcome to Marteelo</h1>
-                    <p class="text-sm text-slate-500 mt-1">Please enter your details to sign in</p>
+                    <h1 className="text-2xl font-bold tracking-tight text-slate-900">Welcome to Marteelo</h1>
+                    <p className="text-sm text-slate-500 mt-1">Please enter your details to sign in</p>
                 </div>
-{/* programatic navigation */}
-                <button onClick={() => navigate('/signup')}>
-                    back
-                </button>
 
-                <form class="space-y-5" onsubmit="event.preventDefault();">
+
+                <form className="space-y-5" onSubmit="event.preventDefault();">
                     <div>
-                        <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                        <label for="email" className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
                             Email address
                         </label>
                         <input
                             id="email"
-                            type="email"
+                            onChange={(e) => { handlingSignin(e) }}
+                            name="email"
                             required
                             placeholder="name@company.com"
-                            class="w-full px-4 py-2.5 text-sm text-slate-900 bg-slate-50 border border-slate-200 rounded-lg placeholder-slate-400 focus:bg-white focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 outline-none transition duration-150"
+                            className="w-full px-4 py-2.5 text-sm text-slate-900 bg-slate-50 border border-slate-200 rounded-lg placeholder-slate-400 focus:bg-white focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 outline-none transition duration-150"
                         />
                     </div>
 
                     <div>
-                        <div class="flex items-center justify-between mb-1.5">
-                            <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-slate-700">
+                        <div className="flex items-center justify-between mb-1.5">
+                            <label for="password" className="block text-xs font-semibold uppercase tracking-wider text-slate-700">
                                 Password
                             </label>
-                            <a href="#" class="text-xs font-medium text-black hover:text-indigo-500 transition-colors">
+                            <a href="#" className="text-xs font-medium text-black hover:text-indigo-500 transition-colors">
                                 Forgot password?
                             </a>
                         </div>
                         <input
-                            id="password"
-                            type="password"
+                            onChange={(e) => { handlingSignin(e) }}
+                            name='password'
                             required
                             placeholder="••••••••"
-                            class="w-full px-4 py-2.5 text-sm text-slate-900 bg-slate-50 border border-slate-200 rounded-lg placeholder-slate-400 focus:bg-white focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 outline-none transition duration-150"
+                            className="w-full px-4 py-2.5 text-sm text-slate-900 bg-slate-50 border border-slate-200 rounded-lg placeholder-slate-400 focus:bg-white focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 outline-none transition duration-150"
                         />
                     </div>
 
                     <button
                         type="submit"
-                        class="w-full py-2.5 px-4 cursor-pointer text-white bg-neutral-950 rounded-full hover:bg-neutral-800 active:scale-95 transition-all shadow-sm"
+                        onClick={(e) => { handleSignin(e) }}
+                        className="w-full py-2.5 px-4 cursor-pointer text-white bg-neutral-950 rounded-full hover:bg-neutral-800 active:scale-95 transition-all shadow-sm"
                     >
                         Sign In
                     </button>
                 </form>
 
-                <p class="mt-6 text-center text-xs text-slate-500">
+                <p className="mt-6 text-center text-xs text-slate-500">
                     Don't have an account?
-                    <a href="#" class="font-semibold text-black hover:text-indigo-500 transition-colors">
+                    <button className="font-semibold text-black hover:text-indigo-500 transition-colors" onClick={() => navigate('/signup')}>
+
+
                         Sign up
-                    </a>
+
+                    </button>
                 </p>
             </div>
         </div>

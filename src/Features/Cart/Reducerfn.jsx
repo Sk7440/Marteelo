@@ -2,8 +2,6 @@ import React from 'react'
 import { data } from '../../data/Products'
 
 function Reducerfn(state, action) {
-  console.log(action)
-  console.log(state)
   let addProduct;
   switch (action.type) {
     case 'ADDED TO CART':
@@ -18,7 +16,7 @@ function Reducerfn(state, action) {
     case 'DELETE FROM CART':
       return {
         ...state,
-        cart: state.cart.filter((item) => item.id !== action.payload)
+        cart: state.cart.filter((ele) => ele.id !== action.payload)
       };
 
       break;
@@ -40,8 +38,8 @@ function Reducerfn(state, action) {
           if (ele.id === action.payload) {
             return { ...ele, qty: ele.qty - 1 };
           }
-          return ele;
         }).filter((ele) => ele.qty > 0)
+      
       };
       break;
     default:

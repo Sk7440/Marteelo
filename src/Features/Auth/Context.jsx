@@ -1,15 +1,15 @@
 import React, { createContext, useReducer } from 'react'
-import authReducer, { loginState } from './loginReducer'
+import authReducer, { initialState } from './loginReducer'
 
 export const mainContext = createContext()
 
 function Context({ children }) {
-  const [state, dispatch] = useReducer(authReducer, loginState)
+  const [authState, authDispatch] = useReducer(authReducer,initialState)
 
   return (
-    <mainContext.Provider value={{ state, dispatch }}>
+    <mainContext.Provider value={{ authState, authDispatch}}>
       {children}
-    </mainContext.Provider>
+    </mainContext.Provider> 
   )
 }
 

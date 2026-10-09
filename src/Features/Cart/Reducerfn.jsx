@@ -39,7 +39,7 @@ function Reducerfn(state, action) {
             return { ...ele, qty: ele.qty - 1 };
           }
         }).filter((ele) => ele.qty > 0)
-      
+
       };
       break;
     default:

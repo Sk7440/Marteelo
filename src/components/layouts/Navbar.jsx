@@ -7,7 +7,8 @@ import { cartContext } from "../../Features/Cart/Cartcontext";
 
 function Navbar() {
     const { openBar } = useContext(cartContext);
-   
+    const { authDispatch, authState } = useContext(mainContext);
+
     return (
         <nav className="flex items-center justify-between px-6 lg:px-12 py-3.5 bg-white/80 backdrop-blur-xl border-b border-neutral-200/80 sticky top-0 z-50 transition-all">
 
@@ -20,7 +21,7 @@ function Navbar() {
 
             <ul className="hidden md:flex items-center justify-center gap-8 cursor-pointer text-xs font-medium uppercase tracking-[0.18em] text-neutral-600">
                 <li className="text-neutral-950 transition-colors">Home</li>
-                <Link to="/products">
+                <Link to="/Products">
                     <li className="hover:text-neutral-950 transition-colors">Products</li>
                 </Link>
                 <Link to="/about">
@@ -30,7 +31,7 @@ function Navbar() {
 
             <div className="flex items-center gap-2.5 sm:gap-3">
                 <button
-                onClick={()=>{openBar()}}
+                    onClick={() => { openBar() }}
                     aria-label="Cart"
                     className="relative p-2 text-neutral-700 hover:text-neutral-950 hover:bg-neutral-100 rounded-full transition-colors cursor-pointer"
                 >
@@ -39,20 +40,32 @@ function Navbar() {
                 </button>
 
                 <div className="h-4 w-px bg-neutral-200 mx-1 hidden sm:block" />
-                <Link to="/login">
 
-                    <button className="px-3.5 py-1.5 text-xs font-medium cursor-pointer text-neutral-700 bg-white border border-neutral-300/80 rounded-full hover:bg-neutral-50 active:scale-95 transition-all">
-                        Login
-                    </button>
-                </Link>
-                <Link to="/signup">
-                    <button
-                    className="px-4 py-1.5 text-xs font-medium cursor-pointer text-white bg-neutral-950 rounded-full hover:bg-neutral-800 active:scale-95 transition-all shadow-sm">
-                        Sign Up
-                    </button>
-                </Link>
+                {authState.currentUser ? (
+                    <Link
+                        to="/User"
+                        className="px-3.5 py-1.5 text-xs font-medium cursor-pointer text-neutral-700 bg-white border border-neutral-300/80 rounded-full hover:bg-neutral-50 active:scale-95 transition-all inline-block"
+                    >
+                        User
+                    </Link>
+                ) : (
+                    <div className="flex items-center gap-2">
+                        <Link
+                            to="/login"
+                            className="px-3.5 py-1.5 text-xs font-medium cursor-pointer text-neutral-700 bg-white border border-neutral-300/80 rounded-full hover:bg-neutral-50 active:scale-95 transition-all inline-block"
+                        >
+                            Login
+                        </Link>
+
+                        <Link
+                            to="/signup"
+                            className="px-4 py-1.5 text-xs font-medium cursor-pointer text-white bg-neutral-950 rounded-full hover:bg-neutral-800 active:scale-95 transition-all shadow-sm inline-block"
+                        >
+                            Sign Up
+                        </Link>
+                    </div>
+                )}
             </div>
-
         </nav>
     );
 }

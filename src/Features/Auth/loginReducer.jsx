@@ -8,7 +8,6 @@ export const initialState = {
 
 let user
 export function authReducer(state, action) {
-  console.log(action.payload)
   switch (action.type) {
 
     case "SIGNUP":

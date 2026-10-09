@@ -2,6 +2,7 @@ import React, { useContext } from 'react'
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { ImCross } from "react-icons/im";
 import { cartContext } from '../../Features/Cart/Cartcontext';
+import { useNavigate } from 'react-router-dom';
 
 function Sidebar() {
     const { sideBar, setSidebar } = useContext(cartContext)
@@ -22,7 +23,7 @@ function Sidebar() {
 
     }
 
-
+    const navigate = useNavigate()
 
 
 
@@ -94,7 +95,7 @@ function Sidebar() {
 
             </div>
             <button
-
+                onClick={() => { navigate("/checkout"); setSidebar(false) }}
                 className="h-10 w-full rounded-lg border border-neutral-800 bg-white text-black"
             >
                 CheckOut

@@ -20,7 +20,10 @@ function Navbar() {
             </h1>
 
             <ul className="hidden md:flex items-center justify-center gap-8 cursor-pointer text-xs font-medium uppercase tracking-[0.18em] text-neutral-600">
-                <li className="text-neutral-950 transition-colors">Home</li>
+                <Link to="/">
+                    <li className="text-neutral-950 transition-colors">Home</li>
+                </Link>
+
                 <Link to="/Products">
                     <li className="hover:text-neutral-950 transition-colors">Products</li>
                 </Link>

@@ -11,25 +11,29 @@ import Contextapi from './Features/Cart/Cartcontext'
 import Checkout from './pages/Checkout'
 import ProductsPage from './pages/Products'
 import UserDashboard from './Dashboard/Userdashboard'
+import Layout from './components/layouts/Layout'
 
 function App() {
   return (
     <><Contextapi>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/signup" element={<Singup />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/Products" element={<ProductsPage />} />
-          <Route path="/User" element={<UserDashboard />} />
+
+          <Route path="/" element={<Layout />} >
+            <Route index element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/signup" element={<Singup />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/Products" element={<ProductsPage />} />
+            <Route path="/User" element={<UserDashboard />} />
+          </Route>
 
         </Routes>
       </BrowserRouter>
       <ToastContainer />
-    </Contextapi>
+    </Contextapi >
 
     </>
   )

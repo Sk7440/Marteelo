@@ -9,7 +9,6 @@ import Sidebar from '../components/layouts/Sidebar'
 function Home() {
   return (
     <>
-    <Navbar/>
     <Herosection/>
     <Sidebar/>
     <ProductHeroCarousel/>

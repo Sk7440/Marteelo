@@ -9,6 +9,7 @@ import { cartContext } from '../Features/Cart/Cartcontext';
 import { Products } from "../data/DataofProducts";
 import { ArrowLeftIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import Testimonials from '../data/Reviews';
 
 export default function ProductsPage() {
   const context = useContext(cartContext);
@@ -183,6 +184,7 @@ export default function ProductsPage() {
           )}
         </section>
       </main>
+      <Testimonials/>
     </div>
   );
 }

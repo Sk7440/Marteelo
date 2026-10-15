@@ -12,7 +12,6 @@ function Checkout() {
 
     const handleApplyPromo = (e) => {
         e.preventDefault();
-        const cleanCode = promoInput.trim().toUpperCase();
 
         if (cleanCode === 'STUDIO10') {
             setAppliedPromo({ code: 'STUDIO10', discountPercent: 10 });
@@ -42,7 +41,7 @@ function Checkout() {
                 </button>
                 <h1 className="text-base font-semibold tracking-wide">Order Summary</h1>
                 <span className="text-xs font-mono text-neutral-400 bg-neutral-900 border border-neutral-800 px-2.5 py-1 rounded-full">
-                    {cart.length} {cart.length === 1 ? 'item' : 'items'}
+                    {state.cart.length} {state.cart.length === 1 ? 'item' : 'items'}
                 </span>
             </div>
 
@@ -74,6 +73,7 @@ function Checkout() {
                                     <div className="inline-flex items-center border border-neutral-700 bg-neutral-950 rounded-lg p-0.5 shadow-inner">
                                         <button
                                             type="button"
+                                            onClick={() => dispatch({ type: "DECREASE_QTY", payload: ele.id })}
 
                                             className="w-6 h-6 flex items-center justify-center rounded-md text-neutral-400 hover:text-white hover:bg-neutral-800 transition"
                                         >

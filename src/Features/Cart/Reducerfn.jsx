@@ -13,14 +13,14 @@ function Reducerfn(state, action) {
       }
 
       break;
-    case 'DELETE FROM CART':
+    case 'DELETE_FROM_CART':
       return {
         ...state,
         cart: state.cart.filter((ele) => ele.id !== action.payload)
       };
 
       break;
-    case 'INCREASE QTY':
+    case 'INCREASE_QTY':
       return {
         ...state,
         cart: state.cart.map((ele) => {
@@ -31,7 +31,7 @@ function Reducerfn(state, action) {
         })
       };
       break;
-    case 'DECREASE QTY':
+    case 'DECREASE_QTY':
       return {
         ...state,
         cart: state.cart.map((ele) => {

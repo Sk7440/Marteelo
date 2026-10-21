@@ -1,39 +1,73 @@
-import React from 'react'
-import { toast } from 'react-toastify';
+// Components validate input and show messages; the reducer only updates data.
 
 export const initialState = {
-  currentUser: null,
-  users: [],
+  users: [],               // every registered user (each has their own orders & addresses)
+  currentUserEmail: null,  // who is logged in right now
 }
 
-let user
+const normalizeEmail = (email) => email.trim().toLowerCase()
+
+// Apply a change to the logged-in user only
+function updateCurrentUser(state, updater) {
+  return {
+    ...state,
+    users: state.users.map((u) =>
+      u.email === state.currentUserEmail ? updater(u) : u
+    ),
+  }
+}
+
 export function authReducer(state, action) {
   switch (action.type) {
-
-    case "SIGNUP":
-      return {
-        ...state,
-        users: [...state.users, action.payload],
-
-      };
-    case "LOGIN":
-      user = state.users.find(
-        (ele) =>
-          ele.email === action.payload.email &&
-          ele.password === action.payload.password
-      )
-      if (user) {
-        return {
-          ...state,
-          currentUser: user
-        };
-      } else {
-        toast.error("Invalid Credentials")
+    case 'SIGNUP': {
+      const email = normalizeEmail(action.payload.email)
+      if (state.users.some((u) => u.email === email)) return state
+      const newUser = {
+        name: action.payload.name.trim(),
+        email,
+        password: action.payload.password,
+        phone: '',
+        createdAt: new Date().toISOString(),
+        orders: [],
+        addresses: [],
       }
-      break;                                                                               
-    default:
-  }
+      return { ...state, users: [...state.users, newUser] }
+    }
 
+    case 'LOGIN':
+      return { ...state, currentUserEmail: normalizeEmail(action.payload.email) }
+
+    case 'LOGOUT':
+      return { ...state, currentUserEmail: null }
+
+    case 'UPDATE_PROFILE':
+      return updateCurrentUser(state, (u) => ({
+        ...u,
+        name: action.payload.name.trim(),
+        phone: action.payload.phone.trim(),
+      }))
+
+    case 'ADD_ORDER':
+      return updateCurrentUser(state, (u) => ({
+        ...u,
+        orders: [action.payload, ...u.orders],
+      }))
+
+    case 'ADD_ADDRESS':
+      return updateCurrentUser(state, (u) => ({
+        ...u,
+        addresses: [...u.addresses, action.payload],
+      }))
+
+    case 'REMOVE_ADDRESS':
+      return updateCurrentUser(state, (u) => ({
+        ...u,
+        addresses: u.addresses.filter((a) => a.id !== action.payload),
+      }))
+
+    default:
+      return state
+  }
 }
 
 export default authReducer

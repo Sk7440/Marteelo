@@ -12,16 +12,10 @@ function Contextapi({ children }) {
   const [state, dispatch] = useReducer(Reducerfn, initialState)
   const [sideBar, setSidebar] = useState(false)
 
-  function openBar(id) {
-
+    function openBar(id) {
     setSidebar(true)
-
- 
     // Navbar calls openBar() with no id just to open the cart
     if (id !== undefined) dispatch({ type: "ADDED TO CART", payload: id })
-
-
-
   }
 
   return (

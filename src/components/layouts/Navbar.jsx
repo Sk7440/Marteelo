@@ -1,29 +1,27 @@
 import { CiShoppingCart } from "react-icons/ci";
-import { useContext, useState } from "react";
-import { toast } from "react-toastify";
+import { useContext } from "react";
 import { mainContext } from "../../Features/Auth/Context";
 import { Link } from "react-router-dom";
 import { cartContext } from "../../Features/Cart/Cartcontext";
 
 function Navbar() {
     const { openBar } = useContext(cartContext);
-    const { authDispatch, authState } = useContext(mainContext);
+    const { authState } = useContext(mainContext);
 
     return (
         <nav className="flex items-center justify-between px-6 lg:px-12 py-3.5 bg-white/80 backdrop-blur-xl border-b border-neutral-200/80 sticky top-0 z-50 transition-all">
 
-            <h1
-                onClick={() => toast('hello')}
+            <Link
+                to="/"
                 className="text-lg font-semibold tracking-tight text-neutral-900 cursor-pointer hover:opacity-75 transition-opacity"
             >
                 Marteelo
-            </h1>
+            </Link>
 
             <ul className="hidden md:flex items-center justify-center gap-8 cursor-pointer text-xs font-medium uppercase tracking-[0.18em] text-neutral-600">
                 <Link to="/">
                     <li className="text-neutral-950 transition-colors">Home</li>
                 </Link>
-
                 <Link to="/Products">
                     <li className="hover:text-neutral-950 transition-colors">Products</li>
                 </Link>
@@ -49,7 +47,7 @@ function Navbar() {
                         to="/User"
                         className="px-3.5 py-1.5 text-xs font-medium cursor-pointer text-neutral-700 bg-white border border-neutral-300/80 rounded-full hover:bg-neutral-50 active:scale-95 transition-all inline-block"
                     >
-                        User
+                        {authState.currentUser.name.split(' ')[0]}
                     </Link>
                 ) : (
                     <div className="flex items-center gap-2">
@@ -59,7 +57,6 @@ function Navbar() {
                         >
                             Login
                         </Link>
-
                         <Link
                             to="/signup"
                             className="px-4 py-1.5 text-xs font-medium cursor-pointer text-white bg-neutral-950 rounded-full hover:bg-neutral-800 active:scale-95 transition-all shadow-sm inline-block"

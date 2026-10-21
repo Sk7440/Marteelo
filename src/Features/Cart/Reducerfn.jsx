@@ -44,6 +44,9 @@ function Reducerfn(state, action) {
           .filter((ele) => ele.qty > 0),
       }
 
+    case 'CLEAR_CART':
+      return { ...state, cart: [] }
+
     default:
       return state
   }

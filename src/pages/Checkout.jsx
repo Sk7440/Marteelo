@@ -1,6 +1,58 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { cartContext } from '../Features/Cart/Cartcontext';
-import { Info, Minus, Plus, Sparkles, Trash2, ArrowLeft, ShieldCheck, Tag } from 'lucide-react';
+import { mainContext } from '../Features/Auth/Context';
+import {
+    Info, Minus, Plus, Sparkles, Trash2, ArrowLeft, ShieldCheck, Tag,
+    User, MapPin, CheckCircle2, Truck,
+} from 'lucide-react';
+
+const COUNTRIES = ['Pakistan', 'United States', 'United Kingdom', 'Canada', 'Australia', 'United Arab Emirates'];
+
+const inputClass = (hasError) =>
+    `w-full bg-neutral-900 border rounded-xl px-3.5 py-2.5 text-xs text-neutral-100 placeholder:text-neutral-500 focus:outline-none transition ${
+        hasError ? 'border-rose-700 focus:border-rose-500' : 'border-neutral-800 focus:border-neutral-500'
+    }`;
+
+function Field({ label, name, value, onChange, error, type = 'text', placeholder, optional, autoComplete }) {
+    return (
+        <div>
+            <label htmlFor={name} className="block text-[11px] font-medium text-neutral-400 mb-1.5">
+                {label} {optional && <span className="text-neutral-600">(optional)</span>}
+            </label>
+            <input
+                id={name}
+                name={name}
+                type={type}
+                value={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                autoComplete={autoComplete}
+                className={inputClass(error)}
+            />
+            {error && <p className="text-[11px] text-rose-400 mt-1">{error}</p>}
+        </div>
+    );
+}
+
+function generateOrderId() {
+    return 'MRT-' + Date.now().toString().slice(-8);
+}
+
+function validateShipping(form) {
+    const errors = {};
+    if (!form.fullName.trim()) errors.fullName = 'Full name is required';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) errors.email = 'Enter a valid email';
+    const digits = form.phone.replace(/\D/g, '');
+    if (digits.length < 10 || digits.length > 15) errors.phone = 'Enter a valid phone number';
+    if (!form.address.trim()) errors.address = 'Street address is required';
+    if (!form.city.trim()) errors.city = 'City is required';
+    if (!form.state.trim()) errors.state = 'State / province is required';
+    if (!/^[A-Za-z0-9 -]{3,10}$/.test(form.postalCode.trim())) errors.postalCode = 'Enter a valid postal code';
+    if (!form.country) errors.country = 'Select a country';
+    return errors;
+}
 
 function Checkout() {
     const { state, dispatch } = useContext(cartContext)
@@ -9,6 +61,28 @@ function Checkout() {
     const [appliedPromo, setAppliedPromo] = useState(null);
     const [promoError, setPromoError] = useState('');
 
+    // Prefill name/email if the user is logged in
+    const currentUser = useContext(mainContext)?.authState?.currentUser;
+    const [shipping, setShipping] = useState({
+        fullName: currentUser?.Name || '',
+        email: currentUser?.email || '',
+        phone: '',
+        address: '',
+        apartment: '',
+        city: '',
+        state: '',
+        postalCode: '',
+        country: 'Pakistan',
+        notes: '',
+    });
+    const [errors, setErrors] = useState({});
+    const [placedOrder, setPlacedOrder] = useState(null);
+
+    const handleShippingChange = (e) => {
+        const { name, value } = e.target;
+        setShipping((prev) => ({ ...prev, [name]: value }));
+        if (errors[name]) setErrors((prev) => ({ ...prev, [name]: undefined }));
+    };
 
     const handleApplyPromo = (e) => {
         e.preventDefault();
@@ -27,11 +101,102 @@ function Checkout() {
         dispatch({ type: 'DELETE_FROM_CART', payload: eleId });
     };
 
-    // Totals are derived from the cart on every render, so they update
-    // automatically when qty changes, items are removed, or the promo is toggled.
     const subtotal = state.cart.reduce((sum, ele) => sum + ele.price * ele.qty, 0);
     const discount = appliedPromo ? subtotal * (appliedPromo.discountPercent / 100) : 0;
     const total = subtotal - discount;
+
+    const handlePlaceOrder = (e) => {
+        e.preventDefault();
+        if (state.cart.length === 0) {
+            toast.error('Your cart is empty');
+            return;
+        }
+        const found = validateShipping(shipping);
+        setErrors(found);
+        if (Object.keys(found).length > 0) {
+            toast.error('Please fill the highlighted fields');
+            return;
+        }
+
+        // No backend yet: build the order object here (send it to an API later)
+        const order = {
+            id: generateOrderId(),
+            items: state.cart,
+            shipping,
+            promo: appliedPromo?.code || null,
+            subtotal,
+            discount,
+            total,
+            placedAt: new Date().toISOString(),
+        };
+
+        setPlacedOrder(order);
+        dispatch({ type: 'CLEAR_CART' });
+        setAppliedPromo(null);
+        toast.success('Order placed successfully!');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // ---------- Order confirmation screen ----------
+    if (placedOrder) {
+        const s = placedOrder.shipping;
+        return (
+            <div className="max-w-xl mt-3 mb-3 mx-auto p-4 sm:p-6 bg-neutral-950 text-neutral-100 min-h-screen">
+                <div className="text-center py-8">
+                    <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto" />
+                    <h1 className="text-lg font-semibold mt-4">Thank you, {s.fullName.split(' ')[0]}!</h1>
+                    <p className="text-xs text-neutral-400 mt-1">
+                        Your order <span className="font-mono text-neutral-200">{placedOrder.id}</span> has been placed.
+                        A confirmation will be sent to {s.email}.
+                    </p>
+                </div>
+
+                <div className="space-y-4 text-sm">
+                    <div className="p-4 rounded-2xl bg-neutral-900/80 border border-neutral-800">
+                        <h2 className="flex items-center gap-2 text-xs font-semibold text-neutral-300 mb-2">
+                            <Truck className="w-3.5 h-3.5" /> Shipping to
+                        </h2>
+                        <p className="text-neutral-200">{s.fullName}</p>
+                        <p className="text-neutral-400 text-xs leading-relaxed">
+                            {s.address}{s.apartment && `, ${s.apartment}`}<br />
+                            {s.city}, {s.state} {s.postalCode}<br />
+                            {s.country}<br />
+                            {s.phone}
+                        </p>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-neutral-900/80 border border-neutral-800 space-y-2">
+                        {placedOrder.items.map((ele) => (
+                            <div key={ele.id} className="flex justify-between text-xs">
+                                <span className="text-neutral-300 truncate pr-3">{ele.name} × {ele.qty}</span>
+                                <span className="font-mono text-neutral-200">${(ele.price * ele.qty).toFixed(2)}</span>
+                            </div>
+                        ))}
+                        <div className="pt-2 mt-2 border-t border-neutral-800 space-y-1.5 text-xs">
+                            <div className="flex justify-between text-neutral-400">
+                                <span>Subtotal</span><span className="font-mono">${placedOrder.subtotal.toFixed(2)}</span>
+                            </div>
+                            {placedOrder.discount > 0 && (
+                                <div className="flex justify-between text-emerald-400">
+                                    <span>Discount ({placedOrder.promo})</span><span className="font-mono">-${placedOrder.discount.toFixed(2)}</span>
+                                </div>
+                            )}
+                            <div className="flex justify-between font-semibold text-sm text-white pt-1">
+                                <span>Total paid</span><span className="font-mono">${placedOrder.total.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <Link
+                        to="/products"
+                        className="block text-center w-full py-3 rounded-xl bg-white text-neutral-950 hover:bg-neutral-200 text-xs font-semibold tracking-wide transition"
+                    >
+                        Continue shopping
+                    </Link>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="max-w-xl mt-3 mb-3 mx-auto p-4 sm:p-6 bg-neutral-950 text-neutral-100 min-h-screen">
@@ -80,7 +245,6 @@ function Checkout() {
                                         <button
                                             type="button"
                                             onClick={() => dispatch({ type: "DECREASE_QTY", payload: ele.id })}
-
                                             className="w-6 h-6 flex items-center justify-center rounded-md text-neutral-400 hover:text-white hover:bg-neutral-800 transition"
                                         >
                                             <Minus className="w-3 h-3" />
@@ -91,7 +255,6 @@ function Checkout() {
                                         <button
                                             type="button"
                                             onClick={() => dispatch({ type: "INCREASE_QTY", payload: ele.id })}
-                                             
                                             className="w-6 h-6 flex items-center justify-center rounded-md text-neutral-400 hover:text-white hover:bg-neutral-800 transition"
                                         >
                                             <Plus className="w-3 h-3" />
@@ -179,11 +342,80 @@ function Checkout() {
                     <span className="font-semibold text-neutral-100">Total</span>
                     <span className="text-lg font-semibold font-mono text-white">${total.toFixed(2)}</span>
                 </div>
+            </div>
 
-                <p className="flex items-center gap-1.5 text-[11px] text-neutral-500 pt-1">
+            {/* Contact + Shipping Details */}
+            <form onSubmit={handlePlaceOrder} noValidate className="mt-6 pt-5 border-t border-neutral-800 space-y-6">
+                <section>
+                    <h2 className="flex items-center gap-2 text-sm font-semibold text-neutral-200 mb-3">
+                        <User className="w-4 h-4 text-neutral-400" /> Contact details
+                    </h2>
+                    <div className="space-y-3">
+                        <Field label="Full name" name="fullName" value={shipping.fullName} onChange={handleShippingChange} error={errors.fullName} placeholder="Muhammad Ali" autoComplete="name" />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <Field label="Email" name="email" type="email" value={shipping.email} onChange={handleShippingChange} error={errors.email} placeholder="you@example.com" autoComplete="email" />
+                            <Field label="Phone" name="phone" type="tel" value={shipping.phone} onChange={handleShippingChange} error={errors.phone} placeholder="0300 1234567" autoComplete="tel" />
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 className="flex items-center gap-2 text-sm font-semibold text-neutral-200 mb-3">
+                        <MapPin className="w-4 h-4 text-neutral-400" /> Shipping address
+                    </h2>
+                    <div className="space-y-3">
+                        <Field label="Street address" name="address" value={shipping.address} onChange={handleShippingChange} error={errors.address} placeholder="House 12, Street 5" autoComplete="address-line1" />
+                        <Field label="Apartment, suite, etc." name="apartment" value={shipping.apartment} onChange={handleShippingChange} optional placeholder="Flat 3B" autoComplete="address-line2" />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <Field label="City" name="city" value={shipping.city} onChange={handleShippingChange} error={errors.city} placeholder="Lahore" autoComplete="address-level2" />
+                            <Field label="State / Province" name="state" value={shipping.state} onChange={handleShippingChange} error={errors.state} placeholder="Punjab" autoComplete="address-level1" />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <Field label="Postal code" name="postalCode" value={shipping.postalCode} onChange={handleShippingChange} error={errors.postalCode} placeholder="54000" autoComplete="postal-code" />
+                            <div>
+                                <label htmlFor="country" className="block text-[11px] font-medium text-neutral-400 mb-1.5">Country</label>
+                                <select
+                                    id="country"
+                                    name="country"
+                                    value={shipping.country}
+                                    onChange={handleShippingChange}
+                                    autoComplete="country-name"
+                                    className={inputClass(errors.country)}
+                                >
+                                    {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                                </select>
+                                {errors.country && <p className="text-[11px] text-rose-400 mt-1">{errors.country}</p>}
+                            </div>
+                        </div>
+                        <div>
+                            <label htmlFor="notes" className="block text-[11px] font-medium text-neutral-400 mb-1.5">
+                                Delivery notes <span className="text-neutral-600">(optional)</span>
+                            </label>
+                            <textarea
+                                id="notes"
+                                name="notes"
+                                rows={2}
+                                value={shipping.notes}
+                                onChange={handleShippingChange}
+                                placeholder="e.g. Call before delivery"
+                                className={inputClass(false) + ' resize-none'}
+                            />
+                        </div>
+                    </div>
+                </section>
+
+                <button
+                    type="submit"
+                    disabled={state.cart.length === 0}
+                    className="w-full py-3.5 rounded-xl bg-white text-neutral-950 hover:bg-neutral-200 text-sm font-semibold tracking-wide transition active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                    Place order · ${total.toFixed(2)}
+                </button>
+
+                <p className="flex items-center justify-center gap-1.5 text-[11px] text-neutral-500">
                     <ShieldCheck className="w-3.5 h-3.5" /> Secure checkout
                 </p>
-            </div>
+            </form>
         </div>
     );
 }

@@ -42,7 +42,7 @@ function Sidebar() {
                         return (
                             <div key={ele.id || idx} className="flex items-center gap-4 p-4 rounded-xl border border-neutral-800/60 bg-neutral-900/50">
                                 <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-neutral-800 border border-neutral-700/40">
-                                    <img src={ele.images} alt={ele.name} className="h-full w-full object-cover" />
+                                    <img src={ele.images?.[0]} alt={ele.name} className="h-full w-full object-cover" />
                                 </div>
 
                                 <div className="flex-1 min-w-0">

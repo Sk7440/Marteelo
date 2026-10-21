@@ -13,6 +13,7 @@ function Checkout() {
     const handleApplyPromo = (e) => {
         e.preventDefault();
 
+        const cleanCode = promoInput.trim().toUpperCase();
         if (cleanCode === 'STUDIO10') {
             setAppliedPromo({ code: 'STUDIO10', discountPercent: 10 });
             setPromoError('');
@@ -23,9 +24,14 @@ function Checkout() {
     };
 
     const handleRemove = (eleId) => {
-        const updated = cart.filter((ele) => ele.id !== eleId);
-        updateCart(updated);
+        dispatch({ type: 'DELETE_FROM_CART', payload: eleId });
     };
+
+    // Totals are derived from the cart on every render, so they update
+    // automatically when qty changes, items are removed, or the promo is toggled.
+    const subtotal = state.cart.reduce((sum, ele) => sum + ele.price * ele.qty, 0);
+    const discount = appliedPromo ? subtotal * (appliedPromo.discountPercent / 100) : 0;
+    const total = subtotal - discount;
 
     return (
         <div className="max-w-xl mt-3 mb-3 mx-auto p-4 sm:p-6 bg-neutral-950 text-neutral-100 min-h-screen">
@@ -59,14 +65,14 @@ function Checkout() {
                             className="flex gap-4 items-center p-3.5 bg-neutral-900/80 border border-neutral-800/80 rounded-2xl hover:border-neutral-700 transition"
                         >
                             <img
-                                src={ele.image}
+                                src={ele.images?.[0]}
                                 alt={ele.name}
                                 className="w-16 h-16 rounded-xl object-cover bg-neutral-800 border border-neutral-700/50 shrink-0"
                             />
 
                             <div className="flex-1 min-w-0">
                                 <h2 className="text-sm font-medium text-neutral-200 truncate">{ele.name}</h2>
-                                <p className="text-xs text-neutral-400 mt-0.5 truncate">{ele.variant}</p>
+                                <p className="text-xs text-neutral-400 mt-0.5 truncate">{ele.brand}</p>
 
                                 {/* Counter & Delete Controls */}
                                 <div className="flex items-center gap-3 mt-2.5">
@@ -80,7 +86,7 @@ function Checkout() {
                                             <Minus className="w-3 h-3" />
                                         </button>
                                         <span className="w-7 text-center text-xs font-mono font-semibold text-neutral-200">
-                                            {ele.quantity}
+                                            {ele.qty}
                                         </span>
                                         <button
                                             type="button"
@@ -104,7 +110,7 @@ function Checkout() {
 
                             <div className="text-right shrink-0">
                                 <span className="text-sm font-semibold font-mono text-neutral-100">
-                                    ${(ele.price * ele.quantity).toFixed(2)}
+                                    ${(ele.price * ele.qty).toFixed(2)}
                                 </span>
                             </div>
                         </div>
@@ -155,7 +161,29 @@ function Checkout() {
                 )}
             </div>
 
+            {/* Order Totals */}
+            <div className="mt-5 pt-4 border-t border-neutral-800 space-y-2.5 text-sm">
+                <div className="flex justify-between text-neutral-400">
+                    <span>Subtotal</span>
+                    <span className="font-mono text-neutral-200">${subtotal.toFixed(2)}</span>
+                </div>
 
+                {appliedPromo && (
+                    <div className="flex justify-between text-emerald-400">
+                        <span>Discount ({appliedPromo.code} -{appliedPromo.discountPercent}%)</span>
+                        <span className="font-mono">-${discount.toFixed(2)}</span>
+                    </div>
+                )}
+
+                <div className="flex justify-between items-baseline pt-3 border-t border-neutral-800">
+                    <span className="font-semibold text-neutral-100">Total</span>
+                    <span className="text-lg font-semibold font-mono text-white">${total.toFixed(2)}</span>
+                </div>
+
+                <p className="flex items-center gap-1.5 text-[11px] text-neutral-500 pt-1">
+                    <ShieldCheck className="w-3.5 h-3.5" /> Secure checkout
+                </p>
+            </div>
         </div>
     );
 }

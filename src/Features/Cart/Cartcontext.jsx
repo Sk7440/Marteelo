@@ -17,7 +17,8 @@ function Contextapi({ children }) {
     setSidebar(true)
 
  
-    dispatch({type:"ADDED TO CART",payload:id})
+    // Navbar calls openBar() with no id just to open the cart
+    if (id !== undefined) dispatch({ type: "ADDED TO CART", payload: id })
 
 
 

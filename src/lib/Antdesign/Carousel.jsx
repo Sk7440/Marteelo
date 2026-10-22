@@ -1,4 +1,5 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Carousel } from 'antd';
 import { 
   ArrowRightOutlined, 
@@ -61,6 +62,7 @@ const products = [
 export default function Slider() {
   const carouselRef = useRef(null);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const navigate = useNavigate();
 
   return (
     <div className="w-full bg-neutral-950 overflow-hidden relative select-none">
@@ -139,10 +141,10 @@ export default function Slider() {
                   <div className="h-8 w-[1px] bg-white/15" />
 
                   <div className="flex items-center gap-3">
-                    <button className="h-12 px-7 rounded-full bg-white text-neutral-950 text-sm font-medium tracking-tight hover:bg-neutral-200 transition-all duration-200 shadow-[0_0_30px_rgba(255,255,255,0.15)] active:scale-95">
+                    <button onClick={() => navigate('/products')} className="h-12 px-7 rounded-full bg-white text-neutral-950 text-sm font-medium tracking-tight hover:bg-neutral-200 transition-all duration-200 shadow-[0_0_30px_rgba(255,255,255,0.15)] active:scale-95">
                       Order Now
                     </button>
-                    <button className="h-12 w-12 rounded-full border border-white/20 text-white flex items-center justify-center hover:bg-white/10 transition-colors active:scale-95">
+                    <button onClick={() => navigate('/products')} aria-label="Shop products" className="h-12 w-12 rounded-full border border-white/20 text-white flex items-center justify-center hover:bg-white/10 transition-colors active:scale-95">
                       <ArrowRightOutlined className="text-xs" />
                     </button>
                   </div>

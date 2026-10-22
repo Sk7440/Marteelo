@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import {
   ShoppingOutlined,
   EyeOutlined,
@@ -381,14 +381,15 @@ export default function FeaturedProducts() {
         </div>
 
         {/* Bottom CTA / Link */}
-        <Link to="/products">
-          <div className="mt-14 text-center">
-            <button className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full border border-neutral-300 text-xs font-semibold uppercase tracking-wider text-neutral-900 hover:bg-neutral-950 hover:text-white hover:border-neutral-950 transition-all duration-200">
-              View All Collection ({data.length})
-              <ArrowRightOutlined className="text-xs" />
-            </button>
-          </div>
-        </Link>
+        <div className="mt-14 text-center">
+          <Link
+            to="/products"
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full border border-neutral-300 text-xs font-semibold uppercase tracking-wider text-neutral-900 hover:bg-neutral-950 hover:text-white hover:border-neutral-950 transition-all duration-200"
+          >
+            View All Collection ({data.length})
+            <ArrowRightOutlined className="text-xs" />
+          </Link>
+        </div>
         
 
       </div>

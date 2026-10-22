@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import { useContext } from 'react';
 import {
   ShoppingOutlined,
   EyeOutlined,
@@ -16,10 +16,7 @@ export default function ProductsPage() {
   const openBar = context?.openBar;
   const navigate = useNavigate();
 
-  const safeProducts = useMemo(
-    () => (Array.isArray(Products) ? Products : []),
-    [Products]
-  );
+  const safeProducts = Array.isArray(Products) ? Products : [];
 
   const handleAddToCart = (item) => {
     if (item.inStock && openBar) {

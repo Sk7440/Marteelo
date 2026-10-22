@@ -61,18 +61,20 @@ function Checkout() {
     const [appliedPromo, setAppliedPromo] = useState(null);
     const [promoError, setPromoError] = useState('');
 
-    // Prefill name/email if the user is logged in
-    const currentUser = useContext(mainContext)?.authState?.currentUser;
+    // Prefill contact details and the default saved address if the user is logged in
+    const { authState, authDispatch } = useContext(mainContext);
+    const currentUser = authState.currentUser;
+    const savedAddress = currentUser?.addresses?.[0];
     const [shipping, setShipping] = useState({
-        fullName: currentUser?.Name || '',
+        fullName: currentUser?.name || '',
         email: currentUser?.email || '',
-        phone: '',
-        address: '',
+        phone: savedAddress?.phone || currentUser?.phone || '',
+        address: savedAddress?.street || '',
         apartment: '',
-        city: '',
+        city: savedAddress?.city || '',
         state: '',
         postalCode: '',
-        country: 'Pakistan',
+        country: COUNTRIES.includes(savedAddress?.country) ? savedAddress.country : 'Pakistan',
         notes: '',
     });
     const [errors, setErrors] = useState({});
@@ -127,8 +129,12 @@ function Checkout() {
             subtotal,
             discount,
             total,
+            status: 'Processing',
             placedAt: new Date().toISOString(),
         };
+
+        // Save it to the account so it shows in the dashboard's order history
+        if (currentUser) authDispatch({ type: 'ADD_ORDER', payload: order });
 
         setPlacedOrder(order);
         dispatch({ type: 'CLEAR_CART' });
@@ -193,6 +199,14 @@ function Checkout() {
                     >
                         Continue shopping
                     </Link>
+                    {currentUser && (
+                        <Link
+                            to="/user"
+                            className="block text-center w-full py-3 rounded-xl border border-neutral-700 text-neutral-200 hover:bg-neutral-900 text-xs font-semibold tracking-wide transition"
+                        >
+                            View my orders
+                        </Link>
+                    )}
                 </div>
             </div>
         );
@@ -346,6 +360,11 @@ function Checkout() {
 
             {/* Contact + Shipping Details */}
             <form onSubmit={handlePlaceOrder} noValidate className="mt-6 pt-5 border-t border-neutral-800 space-y-6">
+                {!currentUser && (
+                    <p className="text-[11px] text-neutral-400 bg-neutral-900 border border-neutral-800 rounded-xl px-3.5 py-2.5">
+                        Checking out as a guest. <Link to="/login" state={{ from: '/checkout' }} className="underline text-neutral-200 hover:text-white">Log in</Link> to save this order to your account.
+                    </p>
+                )}
                 <section>
                     <h2 className="flex items-center gap-2 text-sm font-semibold text-neutral-200 mb-3">
                         <User className="w-4 h-4 text-neutral-400" /> Contact details

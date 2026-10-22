@@ -36,7 +36,7 @@ const initials = (name) =>
 function StatusBadge({ status }) {
   return (
     <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-amber-50 text-amber-700">
-      <SyncOutlined spin /> {status}
+      <SyncOutlined spin /> {status || 'Processing'}
     </span>
   );
 }

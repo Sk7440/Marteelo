@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { Eye, EyeOff } from 'lucide-react'
 import { mainContext } from '../Features/Auth/Context'
@@ -14,6 +14,9 @@ const inputClass = (hasError) =>
 function Login() {
     const { authDispatch, authState } = useContext(mainContext)
     const navigate = useNavigate()
+    const location = useLocation()
+    // Go back to where the user came from (e.g. checkout), otherwise the dashboard
+    const redirectTo = location.state?.from || '/user'
 
     const [form, setForm] = useState({ email: '', password: '' })
     const [error, setError] = useState('')
@@ -21,8 +24,8 @@ function Login() {
 
     // Already logged in? Skip the login page.
     useEffect(() => {
-        if (authState.currentUser) navigate('/User', { replace: true })
-    }, [authState.currentUser, navigate])
+        if (authState.currentUser) navigate(redirectTo, { replace: true })
+    }, [authState.currentUser, navigate, redirectTo])
 
     function handleChange(e) {
         setForm({ ...form, [e.target.name]: e.target.value })

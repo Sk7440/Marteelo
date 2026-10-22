@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { 
   StarFilled, 
   CheckCircleFilled, 
-  ArrowRightOutlined, 
-  LeftOutlined, 
-  RightOutlined 
+  ArrowRightOutlined
 } from '@ant-design/icons';
 
 const testimonialsData = [
@@ -83,7 +81,7 @@ const testimonialsData = [
 ];
 
 export default function Testimonials() {
-  const [filterRating, setFilterRating] = useState('all');
+  const [filterRating] = useState('all');
 
   const filteredTestimonials = filterRating === 'all'
     ? testimonialsData
